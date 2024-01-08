@@ -1,12 +1,12 @@
 #include <AccelStepper.h>
 #include <NewPing.h>
 
-// Define HC-SR04 ultrasonic sensor pins
-#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters).
+// HC-SR04
+#define TRIGGER_PIN  12  //trigger pin
+#define ECHO_PIN     11  // echo pin 
+#define MAX_DISTANCE 200 // Maximum distance (in cm).
 
-// Create NewPing instance for HC-SR04
+// NewPing instance
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); 
 
 // Define stepper motor pins
@@ -15,34 +15,33 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 #define STEPPER_PIN3 4
 #define STEPPER_PIN4 5
 
-// Create AccelStepper instance for stepper motor
+// AccelStepper instance for motor
 AccelStepper stepper(AccelStepper::FULL4WIRE, STEPPER_PIN1, STEPPER_PIN2, STEPPER_PIN3, STEPPER_PIN4);
 
 void setup() {
   Serial.begin(9600); // Initialize serial communication
 
-  stepper.setMaxSpeed(2000); // Set maximum speed of the stepper motor
-  stepper.setAcceleration(1000); // Set acceleration of the stepper motor
+  stepper.setMaxSpeed(2000); // maximum speed of motor
+  stepper.setAcceleration(1000); // acceleration of motor
 }
 
 void loop() {
   if (Serial.available() > 0) {
-    char command = Serial.read(); // Read serial input
+    char command = Serial.read(); // serial input
 
-    // Perform actions based on received commands
     if (command == 'F') {
-      stepper.setSpeed(100); // Set forward speed
-      stepper.runSpeed();    // Move the stepper motor forward
+      stepper.setSpeed(100); // forward speed
+      stepper.runSpeed();    // Motor moves forward
     } else if (command == 'B') {
-      stepper.setSpeed(-100); // Set backward speed
-      stepper.runSpeed();     // Move the stepper motor backward
+      stepper.setSpeed(-100); // backward speed
+      stepper.runSpeed();     // Motor moves backward
     } else if (command == 'S') {
-      stepper.setSpeed(0); // Stop the stepper motor
+      stepper.setSpeed(0); // Stop
       stepper.runSpeed();  // Stop the motor
     }
   }
 
-  // Read distance from HC-SR04 sensor
+  // Distance from HC-SR04 sensor
   unsigned int distance = sonar.ping_cm();
 
   // Send distance data via serial
@@ -50,5 +49,5 @@ void loop() {
   Serial.print(distance);
   Serial.println(" cm");
   
-  delay(100); // Small delay
+  delay(100); // Small delay so that it doesnt fry your CPU :D 
 }
